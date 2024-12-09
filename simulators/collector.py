@@ -3,6 +3,7 @@ A simple data collector that prints all data when the simulation finishes.
 
 """
 import collections
+import matplotlib.pyplot as plt
 
 import mosaik_api_v3
 
@@ -46,11 +47,26 @@ class Collector(mosaik_api_v3.Simulator):
         return None
 
     def finalize(self):
-        print('Collected data:')
-        for sim, sim_data in sorted(self.data.items()):
-            print('- %s:' % sim)
-            for attr, values in sorted(sim_data.items()):
-                print('  - %s: %s' % (attr, values))
+        print('Collector in finalize. Plot data now.')
+
+        # Initialize the plot
+        plt.figure(figsize=(10, 6))
+
+        # Iterate over each dataset in your simulation data
+        for dataset_name, dataset_values in self.data.items():
+            for parameter, time_series in dataset_values.items():
+                times = list(time_series.keys())
+                values = list(time_series.values())
+                plt.plot(times, values, label=f"{dataset_name} - {parameter}")
+        # Configure plot aesthetics
+        plt.xlabel('Time (minutes)')
+        plt.ylabel('Power (W)')
+        plt.title('Simulation Data Visualization')
+        plt.legend()
+        plt.grid(True)
+
+        # Display the plot
+        plt.show()
 
 
 if __name__ == '__main__':
